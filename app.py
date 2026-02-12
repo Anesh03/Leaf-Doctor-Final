@@ -61,6 +61,15 @@ st.markdown("""
         transform: translateY(-1px);
     }
     
+    /* Rejection Alert Styling */
+    .rejection-box {
+        background-color: #3a1a1a;
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 10px solid #dc3545;
+        margin-top: 20px;
+    }
+    
     /* Table & Graph custom containers */
     .results-panel { background-color: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
     </style>
@@ -90,11 +99,22 @@ def load_expert_model():
     return None
 
 def botanical_validation(image):
-    """Computer Vision check to ensure only leaves are analyzed."""
+    """
+    Expert Color-Science Check: Filters out non-botanical objects (people/jerseys) 
+    by analyzing RGB dominance.
+    """
     img_np = np.array(image.convert('RGB'))
-    r, g, b = img_np[:,:,0].astype(int), img_np[:,:,1].astype(int), img_np[:,:,2].astype(int)
+    r = img_np[:,:,0].astype(np.int32)
+    g = img_np[:,:,1].astype(np.int32)
+    b = img_np[:,:,2].astype(np.int32)
+    
+    # Requirement: Green must be dominant and stronger than Red/Blue.
+    # Also ensures the image isn't too dark (g > 45).
     green_mask = (g > r) & (g > b) & (g > 45)
-    return (np.sum(green_mask) / green_mask.size) * 100 > 12.0
+    green_percentage = (np.sum(green_mask) / green_mask.size) * 100
+    
+    # Industrial Threshold: At least 15% of pixels must be 'Botanical Green'.
+    return green_percentage > 15.0
 
 # --- Dashboard Architecture ---
 model = load_expert_model()
@@ -132,17 +152,27 @@ with col_input:
         image = Image.open(captured_file)
         st.image(image, caption="Current Diagnostic Sample", use_container_width=True)
         
-        # Expert Validation
-        if not botanical_validation(image):
-            st.warning("⚠️ **System Alert**: Sample rejected. Non-botanical content detected.")
+        # Expert Validation Check
+        is_valid = botanical_validation(image)
+        if not is_valid:
+            st.markdown("""
+                <div class="rejection-box">
+                    <h3 style="color: #ff8080; margin: 0;">🚫 Integrity Check Failed</h3>
+                    <p style="color: #f8d7da; margin-top: 10px;">
+                        The <b>Pathology Engine</b> detected non-botanical artifacts. 
+                        AI inference is disabled to prevent false diagnostics. 
+                        Please scan a valid plant leaf.
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
         else:
-            st.success("✅ Sample validated. Ready for deep inference.")
+            st.success("✅ Botanical Sample validated. Ready for deep inference.")
 
 # Results and Analysis Column
 with col_results:
     if captured_file and botanical_validation(image):
         with st.spinner("🚀 Running Multi-Layer Neural Inference..."):
-            # Expert Preprocessing
+            # Expert Preprocessing to fix InvalidArgumentError
             img_resized = image.resize((224, 224))
             img_array = tf.keras.preprocessing.image.img_to_array(img_resized).astype('float32')
             img_array = tf.keras.applications.mobilenet_v3.preprocess_input(img_array)
@@ -177,7 +207,7 @@ with col_results:
             st.table(df.set_index('Pathology').style.format("{:.2f}%"))
             
             if st.button("💊 Generate Clinical Treatment Plan"):
-                st.markdown(f"**Clinical Plan for {CLASS_NAMES[top_idx[0]]}:** Data generation in progress...")
+                st.info(f"Clinical protocol generation active for {CLASS_NAMES[top_idx[0]]}...")
 
     else:
-        st.info("📤 Please upload or capture a leaf sample to begin the diagnostic process.")
+        st.info("📤 Please provide a botanical leaf sample to initiate diagnostic inference.")
