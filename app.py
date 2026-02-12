@@ -127,7 +127,7 @@ with st.sidebar:
     st.markdown("### 📷 Input Interface")
     input_source = st.selectbox("Select Capture Source", ["Direct Image Upload", "Live Camera Stream"])
     st.markdown("---")
-    st.write("University of Sindh | Final Year Project")
+    st.write("Anesh Meghwar 2K22/CSE/21 |IMCS University of Sindh ")
 
 # --- Main Interface ---
 st.markdown("""
