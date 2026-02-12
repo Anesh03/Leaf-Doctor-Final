@@ -8,8 +8,8 @@ import os
 
 # --- AMAZING PAGE CONFIGURATION ---
 st.set_page_config(
-    page_title="Leaf Doctor AI | UNBELIEVABLE PATHOLOGY",
-    page_icon="🌿",
+    page_title="Leaf Doctor ",
+    page_icon="🔬",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -17,20 +17,14 @@ st.set_page_config(
 # --- EXCELLENT PROFESSIONAL CUSTOM CSS ---
 st.markdown("""
     <style>
-    /* Global Dark Masterpiece Theme */
     .main { background-color: #0d1117; color: #c9d1d9; font-family: 'Inter', sans-serif; }
-    
-    /* Amazing Sidebar styling */
     [data-testid="stSidebar"] { background-color: #161b22; border-right: 1px solid #30363d; }
     
     /* Unbelievable Research ID Card */
     .id-card {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(46, 160, 67, 0.4);
-        border-radius: 15px;
-        padding: 22px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border-radius: 15px; padding: 22px; margin-bottom: 25px;
     }
     .id-label { color: #8b949e; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; }
     .id-value { color: #ffffff; font-size: 1.05rem; font-weight: 700; margin-bottom: 15px; }
@@ -39,34 +33,20 @@ st.markdown("""
     /* Awesome Action Buttons */
     div.stButton > button {
         background: linear-gradient(135deg, #238636 0%, #1b5e20 100%);
-        color: #ffffff;
-        border-radius: 10px;
-        border: none;
-        padding: 14px 28px;
-        font-weight: 700;
-        width: 100%;
-        transition: all 0.4s ease;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        color: #ffffff; border-radius: 10px; border: none; padding: 14px 28px;
+        font-weight: 700; width: 100%; transition: all 0.4s ease;
     }
-    div.stButton > button:hover { transform: scale(1.02); box-shadow: 0 8px 25px rgba(46, 160, 67, 0.5); color: #4ade80; }
+    div.stButton > button:hover { transform: scale(1.02); color: #4ade80; }
 
     /* Incredible Diagnosis Banner */
     .banner-container {
         background: linear-gradient(135deg, #1f6feb 0%, #238636 100%);
-        padding: 45px;
-        border-radius: 20px;
-        text-align: center;
-        margin-bottom: 35px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        padding: 45px; border-radius: 20px; text-align: center; margin-bottom: 35px;
     }
     
-    /* Expert Rejection Alert */
     .rejection-box {
-        background-color: #3a1a1a;
-        padding: 30px;
-        border-radius: 15px;
-        border-left: 12px solid #dc3545;
-        margin-top: 25px;
+        background-color: #3a1a1a; padding: 30px; border-radius: 15px;
+        border-left: 12px solid #dc3545; margin-top: 25px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -106,7 +86,6 @@ with st.sidebar:
     st.markdown("<h1 style='text-align: center; color: #4ade80;'>LEAF DOCTOR</h1>", unsafe_allow_html=True)
     st.markdown("---")
     
-    # EXCELLENT PROJECT CARD
     st.markdown(f"""
         <div class="id-card">
             <div class="id-label">Project Title</div>
@@ -126,8 +105,7 @@ with st.sidebar:
     st.markdown("---")
     input_source = st.selectbox("📸 SELECT CAPTURE SOURCE", ["Direct Image Upload", "Live Camera Stream"])
 
-# UNBELIEVABLE MAIN HEADER
-st.markdown("""<div class="banner-container"><h1>🌿 Leaf Doctor </h1><p style="font-size: 1.2rem; opacity: 0.9;">Excellent Neural Network Powered Botanical Diagnostic Dashboard</p></div>""", unsafe_allow_html=True)
+st.markdown("""<div class="banner-container"><h1>🌿 INTERNATIONAL PATHOLOGY ENGINE</h1><p style="font-size: 1.2rem; opacity: 0.9;">Excellent Neural Network Powered Botanical Diagnostic Dashboard</p></div>""", unsafe_allow_html=True)
 
 col_input, col_results = st.columns([1, 1.4], gap="large")
 
@@ -140,22 +118,27 @@ with col_input:
         st.image(image, caption="AMAZING SAMPLE PREVIEW", use_container_width=True)
         
         if not botanical_validation(image):
-            st.markdown("""<div class="rejection-box"><h3 style="color: #ff8080; margin: 0;">🚫 INTEGRITY CHECK FAILED</h3><p style="color: #f8d7da; margin-top: 10px;">EXCELLENT WARNING: Non-botanical artifacts detected. AI inference disabled to prevent false results.</p></div>""", unsafe_allow_html=True)
+            st.markdown("""<div class="rejection-box"><h3 style="color: #ff8080; margin: 0;">🚫 INTEGRITY CHECK FAILED</h3><p style="color: #f8d7da; margin-top: 10px;">EXCELLENT WARNING: Non-botanical artifacts detected.</p></div>""", unsafe_allow_html=True)
         else:
             st.success("✅ AMAZING! Botanical Sample validated. Ready for deep inference.")
 
 with col_results:
     if captured_file and botanical_validation(image):
         with st.spinner("🧬 RUNNING UNBELIEVABLE NEURAL INFERENCE..."):
+            # --- THE CRITICAL FIX FOR LINE 153 ---
             img_resized = image.resize((224, 224))
-            img_array = tf.keras.preprocessing.image.img_to_array(img_resized).astype('float32')
+            img_array = tf.keras.preprocessing.image.img_to_array(img_resized)
+            
+            # Ensure proper shape and normalization for MobileNetV3
+            img_array = np.expand_dims(img_array, axis=0)
             img_array = tf.keras.applications.mobilenet_v3.preprocess_input(img_array)
-            preds = model.predict(np.expand_dims(img_array, axis=0), verbose=0)
+            
+            # Expert Inference Execution
+            preds = model.predict(img_array, verbose=0)
             top_idx = np.argsort(preds[0])[-5:][::-1]
             
-            # EXCELLENT RESULTS DISPLAY
             st.markdown(f"""
-                <div style="background: rgba(35, 134, 54, 0.15); border: 2px solid #4ade80; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+                <div style="background: rgba(35, 134, 54, 0.15); border: 2px solid #4ade80; border-radius: 15px; padding: 30px;">
                     <h2 style="color: #4ade80; margin: 0;">🔬 DIAGNOSIS CONFIRMED</h2>
                     <p style="font-size: 1.8rem; color: white; margin-top: 10px;"><b>{CLASS_NAMES[top_idx[0]]}</b></p>
                     <p style="font-size: 1.1rem; opacity: 0.9;">UNBELIEVABLE Confidence: {preds[0][top_idx[0]]*100:.2f}%</p>
@@ -169,8 +152,5 @@ with col_results:
             st.plotly_chart(fig, use_container_width=True)
             
             st.table(df.set_index('Pathology').style.format("{:.2f}%"))
-            
-            if st.button("💊 GENERATE AMAZING TREATMENT PROTOCOL"):
-                st.success(f"EXCELLENT! Protocol generated for {CLASS_NAMES[top_idx[0]]}.")
     else:
         st.info("📤 AWAITING AMAZING BOTANICAL SAMPLE...")
