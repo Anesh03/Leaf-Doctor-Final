@@ -122,7 +122,7 @@ model = load_expert_model()
 # --- Sidebar Controls ---
 with st.sidebar:
     st.markdown("## 🛠️ System Configuration")
-    st.info("AI Core: MobileNetV3-Large")
+    st.info("DL Model: MobileNetV3-Small")
     st.markdown("---")
     st.markdown("### 📷 Input Interface")
     input_source = st.selectbox("Select Capture Source", ["Direct Image Upload", "Live Camera Stream"])
