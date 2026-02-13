@@ -105,7 +105,7 @@ with st.sidebar:
     st.markdown("---")
     input_source = st.selectbox("📸 SELECT CAPTURE SOURCE", ["Direct Image Upload", "Live Camera Stream"])
 
-st.markdown("""<div class="banner-container"><h1>🌿 INTERNATIONAL PATHOLOGY ENGINE</h1><p style="font-size: 1.2rem; opacity: 0.9;">Excellent Neural Network Powered Botanical Diagnostic Dashboard</p></div>""", unsafe_allow_html=True)
+st.markdown("""<div class="banner-container"><h1>🌿 Leaf Doctor </h1><p style="font-size: 1.2rem; opacity: 0.9;">Neural Network Powered Botanical Diagnostic Dashboard</p></div>""", unsafe_allow_html=True)
 
 col_input, col_results = st.columns([1, 1.4], gap="large")
 
